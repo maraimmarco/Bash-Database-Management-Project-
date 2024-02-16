@@ -3,7 +3,6 @@
 echo hello
 while true; do
     option=$(zenity --list --title="Select Option" --column="Options" "createDB" "connectDB" "Exit" --width=250 --height=200 --hide-header)
-
     case $option in
         "createDB")
             DBNAME=$(zenity --entry --title="Create DataBase" --text="please enter database name to create:" --entry-text="New DataBase" --cancel-label="Back")
@@ -36,19 +35,47 @@ while true; do
                     zenity --notification --text="Database connected: $conDB"
 
                     while true; do
-			option=$(zenity --list --title="Select Option" --column="Options" "Create Table" "List Table" "Back" --width=250 --height=200 --hide-header)
-
+                        option=$(zenity --list --title="Select Option" --column="Options" "Create Table" "List Table" "Back" --width=250 --height=200 --hide-header)
                         
                         case $option in
                             "Create Table")
                                 TBname=$(zenity --entry --title="Create Table" --text="Please enter table name:")
+                                # Check if the table name is empty
+                                if [[ -z $TBname ]]; then
+                                    echo "Table name is empty"
+                                    zenity --notification --text="Table name is empty"
+                                    continue
+                                fi
+                                
                                 colNumber=$(zenity --entry --title="Create Table" --text="Please enter column number:")
+                                # Check if the column number is not empty and is a valid number
+                                if [[ -z $colNumber || ! $colNumber =~ ^[1-9][0-9]*$ ]]; then
+                                    echo "Invalid column number"
+                                    zenity --notification --text="Invalid column number"
+                                    continue
+                                fi
+                                
                                 line=""
                                 for ((i=0; i<$colNumber; i++)); do
                                     colName=$(zenity --entry --title="Create Table" --text="Enter column name:")
+                                    # Check if the column name is empty
+                                    if [[ -z $colName ]]; then
+                                        echo "Column name cannot be empty"
+                                        zenity --notification --text="Column name cannot be empty"
+                                        continue 
+                                    fi
+                                    
                                     colDatatype=$(zenity --entry --title="Create Table" --text="Enter column data type:")
+                                    # Check if the column data type is empty
+                                    if [[ -z $colDatatype ]]; then
+                                        echo "Column data type cannot be empty"
+                                        zenity --notification --text="Column data type cannot be empty"
+                                        continue 
+                                    fi
+                                    
                                     line+=":$colName:$colDatatype"
                                 done
+                                
                                 echo "Table created"
                                 touch "$TBname"
                                 echo "$line" >> "$TBname"
