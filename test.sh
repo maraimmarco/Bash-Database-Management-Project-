@@ -1,5 +1,6 @@
 #!/bin/bash
-
+#create zenity to button user choose from it (int string)
+#need to vaild the choose of int and string
 echo hello
 while true; do
     option=$(zenity --list --title="Select Option" --column="Options" "createDB" "connectDB" "Exit" --width=250 --height=200 --hide-header)
@@ -46,7 +47,6 @@ while true; do
                                     zenity --notification --text="Table name is empty"
                                     continue
                                 fi
-                                
                                 colNumber=$(zenity --entry --title="Create Table" --text="Please enter column number:")
                                 # Check if the column number is not empty and is a valid number
                                 if [[ -z $colNumber || ! $colNumber =~ ^[1-9][0-9]*$ ]]; then
@@ -54,7 +54,6 @@ while true; do
                                     zenity --notification --text="Invalid column number"
                                     continue
                                 fi
-                                
                                 line=""
                                 for ((i=0; i<$colNumber; i++)); do
                                     colName=$(zenity --entry --title="Create Table" --text="Enter column name:")
@@ -63,19 +62,28 @@ while true; do
                                         echo "Column name cannot be empty"
                                         zenity --notification --text="Column name cannot be empty"
                                         continue 
-                                    fi
-                                    
-                                    colDatatype=$(zenity --entry --title="Create Table" --text="Enter column data type:")
-                                    # Check if the column data type is empty
-                                    if [[ -z $colDatatype ]]; then
-                                        echo "Column data type cannot be empty"
-                                        zenity --notification --text="Column data type cannot be empty"
-                                        continue 
-                                    fi
-                                    
+                                    fi  
+                                    colDatatype=$(zenity --list --title="Select Data Type" --column="Options" "Int" "String" "Back" --width=250 --height=200 --hide-header)
+                                    case $colDatatype in
+                                        "Int" | "String")
+                                            # Check if the column data type is empty
+                                            if [[ -z $colDatatype ]]; then
+                                                echo "Column data type cannot be empty"
+                                                zenity --notification --text="Column data type cannot be empty"
+                                                continue 
+                                            fi
+                                            ;;
+                                        "Back")
+                                            continue 2
+                                            ;;
+                                        *)
+                                            echo "Invalid option"
+                                            zenity --notification --text="Invalid option"
+                                            continue 
+                                            ;;
+                                    esac
                                     line+=":$colName:$colDatatype"
                                 done
-                                
                                 echo "Table created"
                                 touch "$TBname"
                                 echo "$line" >> "$TBname"
