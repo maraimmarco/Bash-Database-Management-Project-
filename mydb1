@@ -1,0 +1,232 @@
+#!/bin/bash
+#create zenity to button user choose from it (int string)
+#need to validate the choose of int and string
+echo hello
+while true; do
+    option=$(zenity --list --title="Select Option" --column="Options" "createDB" "listDB" "dropDB" "connectDB" "Exit" --width=250 --height=200 --hide-header)
+    case $option in
+        "createDB")
+            DBNAME=$(zenity --entry --title="Create DataBase" --text="please enter database name to create:" --entry-text="New DataBase" --cancel-label="Back")
+            # Check if the input is empty
+            if [[ -z $DBNAME ]]; then
+                echo "Input is empty"
+                zenity --notification --text="Input Is Empty"
+            else
+                if [[ ! -e $DBNAME ]]; then
+                    mkdir "$DBNAME"
+                    echo "Database created successfully"
+                    zenity --notification --text="Database created: $DBNAME"
+                else
+                    echo "Database already exists"
+                    zenity --notification --text="Database already exists"
+                fi
+            fi
+            ;;
+        "listDB")
+            # List existing databases
+            result=$(ls -d */)
+            zenity --info --title="Existing Databases" --text="$result" --width=400 --height=300
+            ;;
+			
+					   
+				"dropDB")
+					    db_name=$(zenity --entry --title="Drop DB" --text="Enter DB name:")
+
+			    if [[ -z "$db_name" ]] || [[ "$db_name" =~ ^[0-9] ]] || [ ! -d "$db_name" ]; then
+				zenity --error --title="Error" --text="Invalid DB name"
+			    else
+				rm -r "$db_name"
+				zenity --info --title="Success" --text="$db_name dropped successfully"
+			    fi
+		    ;;
+
+
+
+        "connectDB")
+	    echo "Connect to database"
+	    conDB=$(zenity --entry --title="Connect to DataBase" --text="Please enter database name:" --cancel-label="Back")
+	    # Check if the input is empty
+	    if [[ -z $conDB ]]; then
+		echo "Input is empty"
+		zenity --notification --text="Input is Empty"
+	    else
+		if [[ -d $conDB ]]; then  # Check if the entered database name is a directory
+		    cd "$conDB" || exit  # Change directory to the selected database
+		    echo "Connected to $conDB"
+		    zenity --notification --text="Database connected: $conDB"
+		    while true; do
+		        # List contents of the current directory (tables in the database)
+		        tables=$(ls | grep -v '^\.')  # Exclude hidden files/directories
+		        
+		        option=$(zenity --list --title="Select Option" --column="Options" "Create Table" "Insert Values" "List Table" "Drop Table" "select from table" "delete from table" "update from table" "Back" --width=250 --height=200 --hide-header)
+                case $option in
+                            "Create Table")
+                                TBNAME=$(zenity --entry --title="Create Table" --text="Please enter table name:")
+                                tbnamem=$TBNAME
+                                # Check if the table name is empty
+                                if [[ -z $TBNAME ]]; then
+                                    echo "Table name is empty"
+                                    zenity --notification --text="Table name is empty"
+                                    continue
+                                fi
+                                colNumber=$(zenity --entry --title="Create Table" --text="Please enter column number:")
+                                # Check if the column number is not empty and is a valid number
+                                if [[ -z $colNumber || ! $colNumber =~ ^[1-9][0-9]*$ ]]; then
+                                    echo "Invalid column number"
+                                    zenity --notification --text="Invalid column number"
+                                    continue
+                                fi
+                               
+                                for ((i=0; i<$colNumber; i++))
+                                do
+                                    line=""
+                                    colName=$(zenity --entry --title="Create Table" --text="Enter column name:")
+                                    # Check if the column name is empty
+                                    if [[ -z $colName ]]; then
+                                        echo "Column name cannot be empty"
+                                        zenity --notification --text="Column name cannot be empty"
+                                        continue 
+                                    fi  
+                                    colDatatype=$(zenity --list --title="Select Data Type" --column="Options" "Int" "String" "Back" --width=250 --height=200 --hide-header)
+                                    case $colDatatype in
+                                        "Int" | "String")
+                                            # Check if the column data type is empty
+                                            if [[ -z $colDatatype ]]; then
+                                                echo "Column data type cannot be empty"
+                                                zenity --notification --text="Column data type cannot be empty"
+                                                continue 
+                                            fi
+                                            ;;
+                                        "Back")
+                                            continue 
+                                            ;;
+                                        *)
+                                            echo "Invalid option"
+                                            zenity --notification --text="Invalid option"
+                                            continue 
+                                            ;;
+                                    esac
+                                    line+="$colName:$colDatatype"
+                                    echo "$line" >>".$tbnamem"
+                                done
+                                echo "Table created"
+                                touch ".$tbnamem"
+                                touch "$TBNAME"
+                                
+                                zenity --notification --text="Table created: $TBNAME"
+                                ;;
+                            "Insert Values")
+                                TBname=$(zenity --list --title="Select Table" --column="Tables" $(ls | grep -v '^\.'))
+                                if [[ -z $TBname ]]; then
+                                    echo "No table selected"
+                                    zenity --notification --text="No table selected"
+                                    continue
+                                fi
+                                # Get the column names from the metadata file
+                                columns=$(cut -d: -f1 ".$TBname")
+                                # Create an associative array to store the column names and their respective values
+                                declare -A values
+                                for column in $columns; do
+                                    # Prompt the user to enter the value for each column using Zenity entry dialog
+                                    value=$(zenity --entry --title="Insert Value" --text="Enter value for column '$column' in table '$TBname':")
+                                    if [[ -z $value ]]; then
+                                        echo "Value for column '$column' cannot be empty"
+                                        zenity --notification --text="Value for column '$column' cannot be empty"
+                                        continue
+                                    fi
+                                    values["$column"]=$value
+                                done
+                                # Construct the line to insert into the table
+                                line=""
+                                for column in $columns; do
+                                    line+="${values[$column]}:"
+                                done
+                                # Append the line to the table file
+                                echo "${line::-1}" >> "$TBname"
+                                zenity --notification --text="Values inserted into: $TBname"
+                                ;;
+                           "List Table")
+				    
+				    result=$(pwd)
+				    echo "$result" 
+				    list=$(ls "$result")
+				    echo "$list"  
+				    zenity --info --title="Existing Databases" --text="$list" --width=400 --height=300
+				    ;;
+
+				    "Drop Table")
+				
+					    drop_table=$(zenity --entry --title="Drop table" --text="Enter table name:")
+
+			    if [[ -z "$drop_table" ]] || [[ "$drop_table" =~ ^[0-9] ]] || [ ! -f  "$drop_table" ]; then
+				zenity --error --title="Error" --text="Invalid DB name"
+			    else
+				rm "$drop_table"
+				    rm -f ".$drop_table" 
+				zenity --info --title="Success" --text="$db_name dropped successfully"
+			    fi			    
+		   		    ;;
+		   		    #delete from table 
+	"select from table")
+			    select_from_table=$(zenity --entry --title="Select from table" --text="Enter table name:")
+			    if [ ! -f "$select_from_table" ] || [ ! -r "$select_from_table" ]; then
+				echo "File $select_from_table does not exist or is not readable."
+				zenity --notification --text="Table $select_from_table does not exist or is not readable"
+			    else 
+				# Read the content of the table file and display it
+				file_content=$(<"$select_from_table")
+				zenity --info --title="Table Content" --text="$file_content" --width=400 --height=300
+			    fi
+			    ;;
+			    "delete from table")
+			    	delete_from_table=$(zenity --entry --title="delete from table" --text="Enter table name:")
+			    	if [ ! -f "$delete_from_table" ] || [ ! -r "$delete_from_table" ]; then
+				echo "File $select_from_table does not exist or is not readable."
+				zenity --notification --text="Table $delete_from_table does not exist or is not readable"
+			    else 
+				delete_record=$(zenity --entry --title="delete from table" --text="please enter the value:")
+				sed -i "/^$delete_record/d" "$delete_from_table"
+				zenity --notification --text=" $delete_record record deleted successfuly"
+			    fi
+			    ;;
+			    "update from table")
+			    	update_from_table=$(zenity --entry --title="update in table" --text="please Enter table name:")
+			    	if [ ! -f "$update_from_table" ] || [ ! -r "$update_from_table" ]; then
+				echo "File $update_from_table does not exist or is not readable."
+				zenity --notification --text="Table $update_from_table does not exist or is not readable"
+			    else 
+			    	#will delete record and insert a new value
+				old_record=$(zenity --entry --title="Update in table" --text="please enter the value would to change: ")
+				sed -i "/^$delete_record/d" "$delete_from_table"
+				new_record=
+				zenity --notification --text=" $delete_record record deleted successfuly"
+			    fi
+			    ;;
+			    ;;
+                    "Back")
+                                break
+                                ;;
+
+                            *)
+                                echo "Invalid option"
+                                zenity --notification --text="Invalid option"
+                                ;;
+                        esac
+                    done
+                else
+                    echo "Database does not exist"
+                    zenity --notification --text="Database Does Not Exist"
+                fi
+            fi
+            ;;
+        "Exit")
+            zenity --notification --text="Connection closed"
+            exit 0
+            ;;
+        *)
+            echo "Invalid option"
+            zenity --notification --text="Invalid option"
+            ;;
+    esac
+done
+
