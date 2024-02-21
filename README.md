@@ -6,8 +6,8 @@
 
   ## Prerequisites
 
-    This script requires Zenity to be installed on your system. Zenity is a program that allows for the creation of simple graphical user interfaces (GUIs) for shell scripts.
-    This script is designed to be run on a Unix-like operating system, such as Linux or macOS.
+    - This script requires Zenity to be installed on your system. Zenity is a program that allows for the creation of simple graphical user interfaces (GUIs) for shell scripts.
+    - This script is designed to be run on a Unix-like operating system, such as Linux or macOS.
     
 ## Features
 
