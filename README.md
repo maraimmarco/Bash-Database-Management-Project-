@@ -8,9 +8,14 @@
 
     - This script requires Zenity to be installed on your system. Zenity is a program that allows for the creation of simple graphical user interfaces (GUIs) for shell scripts.
     - This script is designed to be run on a Unix-like operating system, such as Linux or macOS.
-    
-## Features
 
+    # 🛠 How to use it:
+ ### 1. Open the terminal on any Linux distribution.
+ ### 2. Navigate to the project directory.
+ ### 3. Execute the command: `./mydb2`
+ 
+# Features
+ ##📌 Main Menu:
 >**Create Database:** Allows users to create a new database by entering a database name.
 
 >**List Databases:** Lists all existing databases.
@@ -19,6 +24,9 @@
 
 >**Connect to Database:** Allows users to connect to an existing database and perform operations on its tables.
 
+## 📊 Database Menu:
+ ### Once connected to a specific database, users can:
+ 
 >**Create Table:** Allows users to create a new table within a connected database by specifying the table name, number of columns, and column names and data types.
 
 >**Insert Values:** Allows users to insert values into a selected table within a connected database.
