@@ -2,7 +2,7 @@
 
 # Bash Database Management System (DBMS) with Zenity GUI:
 
-  This is a simple Bash script that provides a basic Database Management System (DBMS) interface with a graphical user interface (GUI) built using Zenity. The script allows users to perform various operations on databases and tables, such as creating databases, listing existing databases, dropping databases, connecting to databases, creating tables, inserting values into tables, listing table contents, dropping tables, selecting records from tables, deleting records from tables, and updating records in tables.
+  ### This is a simple Bash script that provides a basic Database Management System (DBMS) interface with a graphical user interface (GUI) built using Zenity. The script allows users to perform various operations on databases and tables, such as creating databases, listing existing databases, dropping databases, connecting to databases, creating tables, inserting values into tables, listing table contents, dropping tables, selecting records from tables, deleting records from tables, and updating records in tables.
 
   ## Prerequisites
 
@@ -46,6 +46,7 @@
   >Error handling is implemented for some common scenarios, such as invalid input or non-existent databases/tables, but additional error checking and validation could be added for robustness.
 
 ### Author
+
 
 @ maraimmarco646@gmail.com
 
