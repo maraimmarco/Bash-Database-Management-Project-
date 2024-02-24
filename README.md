@@ -9,7 +9,8 @@
     - This script requires Zenity to be installed on your system. Zenity is a program that allows for the creation of simple graphical user interfaces (GUIs) for shell scripts.
     - This script is designed to be run on a Unix-like operating system, such as Linux or macOS.
 
-    # 🛠 How to use it:
+
+   # 🛠 How to use it:
  ### 1. Open the terminal on any Linux distribution.
  ### 2. Navigate to the project directory.
  ### 3. Execute the command: `./mydb2`
